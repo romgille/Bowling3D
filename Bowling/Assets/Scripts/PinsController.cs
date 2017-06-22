@@ -1,5 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
+using System.Linq;
+using System.Collections.Generic;
 
 public class PinsController : MonoBehaviour 
 {
@@ -8,7 +10,7 @@ public class PinsController : MonoBehaviour
 
     private void Start()
     {
-        listPins = GameObject.FindGameObjectsWithTag("Pins");
+        listPins = GameObject.FindGameObjectsWithTag("Pin");
         detector = GameObject.FindGameObjectWithTag("PinDetector");
     }
 
@@ -21,24 +23,29 @@ public class PinsController : MonoBehaviour
 
 	public bool AllDown()
 	{
-        bool oneDown = false;
-		while()
-        {
-
-        }
+        //bool oneDown = false;
+		//while()
+        //{
+        //
+        //}
 		return false;
 	}
 
 	public void RemoveKnockedOut()
 	{
-		//
-		// TODO: implement the method
-		//
+        for(int i = 0; i < listPins.Length; i++)
+        {
+            if (!listPins[i].activeSelf)
+            {
+                System.Console.WriteLine(i);
+                listPins[i].gameObject.SetActive(false);
+            }
+        }
 	}
 
 	public int KnockedOut()
 	{
-        return listPins.Count(p => p.IsActive());
+        return listPins.Count(p => !p.activeSelf);
 	}
 
 	public bool HasDone()
