@@ -1,14 +1,13 @@
 ﻿using UnityEngine;
 using System.Collections;
 using System.Linq;
-using System.Collections.Generic;
 
-public class PinsController : MonoBehaviour 
+public class PinsController : MonoBehaviour
 {
     GameObject[] listPins;
     GameObject detector;
 
-    private void Start()
+    void Start()
     {
         listPins = GameObject.FindGameObjectsWithTag("Pin");
         detector = GameObject.FindGameObjectWithTag("PinDetector");
@@ -16,68 +15,54 @@ public class PinsController : MonoBehaviour
 
     void Update()
     {
-        if(HasDone())
+        RemoveKnockedOut();
+        if (HasDone())
         {
             Reset();
         }
     }
 
-	public void Reset() 
-	{
+    public void Reset()
+    {
+        foreach (GameObject pin in listPins)
+        {
+            pin.gameObject.SetActive(true);
+            pin.GetComponent<ResetPosition>().Reset();
+        }
+    }
+
+    public bool AllDown()
+    {
+        return listPins.Length == KnockedOut();
+    }
+
+    public void RemoveKnockedOut()
+    {
         foreach(GameObject pin in listPins)
         {
-            pin.GetComponent<ResetPosition>().Reset();
-            pin.SetActive(true);
-        }
-	}
-
-	public bool AllDown()
-	{
-        bool allDown = true;
-        int i = 0;
-
-        while(i < listPins.Length && allDown)
-        {
-            if(listPins[i].activeSelf)
+            if(!pin.GetComponent<Collider>().bounds.Intersects(detector.GetComponent<Collider>().bounds))
             {
-                allDown = false;
-            }
-            i++;
-        }
-		return allDown;
-	}
-
-	public void RemoveKnockedOut()
-	{
-        for(int i = 0; i < listPins.Length; i++)
-        {
-            if (!listPins[i].activeSelf)
-            {
-                listPins[i].gameObject.SetActive(false);
+                pin.gameObject.SetActive(false);
             }
         }
-	}
+    }
 
-	public int KnockedOut()
-	{
+    public int KnockedOut()
+    {
         return listPins.Count(p => !p.activeSelf);
-	}
+    }
 
-	public bool HasDone()
-	{
-        if(!AllDown())
+    public bool HasDone()
+    {
+        foreach (GameObject pin in listPins)
         {
-            return false;
-        }
-
-		foreach(GameObject pin in listPins)
-        {
-            if(pin.GetComponent<Rigidbody>().velocity != new Vector3(0, 0, 0) && 
-                pin.GetComponent<MeshRenderer>().isVisible)
+            if(!pin.GetComponent<MeshRenderer>().isVisible && AllDown())
             {
-                return false;
+                return true;
             }
         }
-		return true;
-	}
+        
+        return false;
+    }
+
 }
