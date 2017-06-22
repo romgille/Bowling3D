@@ -54,7 +54,6 @@ public class BallController : MonoBehaviour
 
     public bool HasDone()
     {
-        //return transform.position.y < 0;
         return !GetComponent<MeshRenderer>().isVisible;
     }
 }

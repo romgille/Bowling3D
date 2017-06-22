@@ -14,11 +14,20 @@ public class PinsController : MonoBehaviour
         detector = GameObject.FindGameObjectWithTag("PinDetector");
     }
 
+    void Update()
+    {
+        if(HasDone())
+        {
+            Reset();
+        }
+    }
+
 	public void Reset() 
 	{
-		//
-		// TODO: implement the method
-		//
+        foreach(GameObject pin in listPins)
+        {
+            pin.GetComponent<ResetPosition>().Reset();
+        }
 	}
 
 	public bool AllDown()
@@ -56,9 +65,19 @@ public class PinsController : MonoBehaviour
 
 	public bool HasDone()
 	{
-		//
-		// TODO: implement the method
-		//
-		return false;
+        if(AllDown())
+        {
+            return true;
+        }
+
+		foreach(GameObject pin in listPins)
+        {
+            if(pin.GetComponent<Rigidbody>().velocity != new Vector3(0, 0, 0) && 
+                pin.GetComponent<MeshRenderer>().isVisible)
+            {
+                return false;
+            }
+        }
+		return true;
 	}
 }
