@@ -27,6 +27,7 @@ public class PinsController : MonoBehaviour
         foreach(GameObject pin in listPins)
         {
             pin.GetComponent<ResetPosition>().Reset();
+            pin.SetActive(true);
         }
 	}
 
@@ -52,7 +53,6 @@ public class PinsController : MonoBehaviour
         {
             if (!listPins[i].activeSelf)
             {
-                System.Console.WriteLine(i);
                 listPins[i].gameObject.SetActive(false);
             }
         }
@@ -65,9 +65,9 @@ public class PinsController : MonoBehaviour
 
 	public bool HasDone()
 	{
-        if(AllDown())
+        if(!AllDown())
         {
-            return true;
+            return false;
         }
 
 		foreach(GameObject pin in listPins)
