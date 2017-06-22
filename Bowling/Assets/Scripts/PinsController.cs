@@ -23,12 +23,18 @@ public class PinsController : MonoBehaviour
 
 	public bool AllDown()
 	{
-        //bool oneDown = false;
-		//while()
-        //{
-        //
-        //}
-		return false;
+        bool allDown = true;
+        int i = 0;
+
+        while(i < listPins.Length && allDown)
+        {
+            if(listPins[i].activeSelf)
+            {
+                allDown = false;
+            }
+            i++;
+        }
+		return allDown;
 	}
 
 	public void RemoveKnockedOut()
