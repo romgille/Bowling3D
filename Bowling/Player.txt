@@ -1,0 +1,132 @@
+using UnityEngine;
+using System.Collections;
+
+public class Player : MonoBehaviour
+{
+	// player attributs
+	public float strength;
+	public float torque;
+    public Scoreboard score;
+
+	// internal variables
+	int rolls;
+	int frame;
+
+	// controllers
+	BallController ball;
+	PinsController pins;
+
+	// state variable
+	public enum State { WAIT, AIM, SHOOT, DONE, Length };
+	private State _state;
+
+	// state accessors
+	public State state { 
+		get {
+			return _state;
+		}
+		private set {
+			_state = value;
+			EnterState();
+		}
+	}
+
+
+	/*
+	 *  Public methods
+	 */
+	
+	public void Reset() 
+	{
+		score.Clear();
+		state = State.WAIT;
+        rolls = 1;
+        frame = 0;
+	}
+
+	public void TakeTurn(int next_frame) 
+	{
+		rolls = 0;
+		frame = next_frame;
+		state = State.AIM;
+	}
+
+
+	/*
+	 *  Private methods
+	 */
+	void Start()
+	{
+		score = new Scoreboard ();
+		ball = GameObject.Find ("Ball")     .GetComponent<BallController> ();
+		pins = GameObject.Find ("PinHolder").GetComponent<PinsController> ();
+		Reset();
+        state = State.SHOOT;
+	}
+
+	void EnterState() {
+        switch(state)
+        {
+            case State.WAIT:
+                Reset();
+                TakeTurn(frame);
+                break;
+            case State.AIM:
+                while (rolls < 3)
+                {
+                    //ball.Update();
+                    ball.FollowMouse();
+                    if (Input.GetMouseButtonDown(0))
+                    {
+                        ball.Shoot(new Vector3(0, 0, 1), 100, 10);
+                        ball.IsShot = true;
+                        state = State.SHOOT;
+                    }
+                }
+                break;
+            case State.SHOOT:
+                if(ball.HasDone() && pins.HasDone())
+                {
+                    ball.IsShot = false;
+                    state = State.DONE;
+                }
+                break;
+            case State.DONE:
+                /*
+                score.SetScore(frame, rolls, pins.KnockedOut());
+                if (frame == 10)
+                {
+                    Reset();
+                } else if (frame == 9) {
+                    if(rolls == 3)
+                    {
+                        TakeTurn(frame);
+                    } else
+                    {
+                        state = State.AIM;
+                    }
+                } else if (frame < 10)
+                {
+                    if (rolls == 2)
+                    {
+                        TakeTurn(frame);
+                    } else
+                    {
+                        state = State.AIM;
+                    }
+                }
+                */
+                break;
+        }
+	}
+
+	
+	void Update() 
+	{
+        EnterState();
+	}
+
+	//
+	// TODO: implement all the remaining methods
+	//
+}
