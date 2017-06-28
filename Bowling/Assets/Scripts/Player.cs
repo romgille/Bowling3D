@@ -6,7 +6,7 @@ public class Player : MonoBehaviour
 	// player attributs
 	public float strength;
 	public float torque;
-	public Scoreboard score;
+    public Scoreboard score;
 
 	// internal variables
 	int rolls;
