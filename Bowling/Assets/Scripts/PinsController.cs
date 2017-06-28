@@ -15,7 +15,10 @@ public class PinsController : MonoBehaviour
 
     void Update()
     {
-        RemoveKnockedOut();
+        if (!GameObject.Find("Ball").gameObject.GetComponent<MeshRenderer>().isVisible)
+        {
+            RemoveKnockedOut();
+        }
         if (HasDone())
         {
             Reset();
