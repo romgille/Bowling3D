@@ -13,18 +13,6 @@ public class PinsController : MonoBehaviour
         detector = GameObject.FindGameObjectWithTag("PinDetector");
     }
 
-    void Update()
-    {
-        if (!GameObject.Find("Ball").gameObject.GetComponent<MeshRenderer>().isVisible)
-        {
-            RemoveKnockedOut();
-        }
-        if (HasDone())
-        {
-            Reset();
-        }
-    }
-
     public void Reset()
     {
         foreach (GameObject pin in listPins)
@@ -52,20 +40,19 @@ public class PinsController : MonoBehaviour
 
     public int KnockedOut()
     {
-        return listPins.Count(p => !p.activeSelf);
+        return listPins.Count(p => p.activeSelf && !p.GetComponent<Collider>().bounds.Intersects(detector.GetComponent<Collider>().bounds));
     }
 
     public bool HasDone()
     {
         foreach (GameObject pin in listPins)
         {
-            if(!pin.GetComponent<MeshRenderer>().isVisible && AllDown())
+            if(!(pin.GetComponent<Renderer>().isVisible && pin.GetComponent<Rigidbody>().velocity != Vector3.zero))
             {
-                return true;
+                continue;
             }
+            return false;
         }
-        
-        return false;
+        return true;
     }
-
 }

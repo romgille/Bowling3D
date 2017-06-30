@@ -38,7 +38,7 @@ public class Player : MonoBehaviour
 	
 	public void Reset() 
 	{
-		score.Clear ();
+		score.Clear();
 		state = State.WAIT;
 	}
 
@@ -46,8 +46,10 @@ public class Player : MonoBehaviour
 	{
 		rolls = 0;
 		frame = next_frame;
-		state = State.AIM;
-	}
+        ball.Reset();
+        pins.Reset();
+        state = State.AIM;
+    }
 
 
 	/*
@@ -63,20 +65,52 @@ public class Player : MonoBehaviour
 	}
 
 	void EnterState() {
-		//
-		// TODO: complete the implementation
-		//
 	}
 
 	
-	void Update() 
-	{
-		//
-		// TODO: complete the implementation
-		//
-	}
+	void Update()
+    {
+        switch (state)
+        {
+            case State.WAIT:
+                resetAll();
+                break;
+            case State.AIM:
+                ball.Reset();
+                pins.RemoveKnockedOut();
+                if (pins.AllDown())
+                {
+                    pins.Reset();
+                }
+                ball.FollowMouse();
+                if (Input.GetMouseButtonUp(0))
+                {
+                    rolls++;
+                    state = State.SHOOT;
+                }
+                break;
+            case State.SHOOT:
+                ball.Shoot(Vector3.forward, 1, 0);
+                if(ball.HasDone() && pins.HasDone())
+                {
+                    state = State.DONE;
+                }
+                break;
+            case State.DONE:
+                score.SetScore(frame, rolls, pins.KnockedOut());
+                if (Input.GetMouseButtonUp(0))
+                {
+                    state = score.IsEnded(frame) ? State.WAIT : State.AIM;
+                }
+                break;
+            default:
+                return;
+        }
+    }
 
-	//
-	// TODO: implement all the remaining methods
-	//
+    private void resetAll()
+    {
+        ball.Reset();
+        pins.Reset();
+    }
 }
